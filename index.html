@@ -2,17 +2,49 @@
 <html>
 <head>
   <title>NLP Chatbot Internship Project</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: linear-gradient(to right, #fdfbfb, #ebedee);
+      margin: 0;
+      padding: 0;
+    }
+
+    .avatar {
+      width: 140px;
+      margin-top: 40px;
+      border-radius: 50%;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      margin-top: 15px;
+    }
+
+    p {
+      color: #555;
+    }
+
+    df-messenger {
+      --df-messenger-button-titlebar-color: #4fc3f7;
+      --df-messenger-chat-background-color: #ffffff;
+      --df-messenger-font-color: #000000;
+    }
+  </style>
 </head>
+
 <body>
+  <img src="https://i.ibb.co/RTcvZVvN/download.jpg" class="avatar">
 
-  <h1>AI-Powered NLP Chatbot</h1>
-  <p>This chatbot uses Natural Language Processing techniques.</p>
-
+  <h1>🤖 AI-Powered NLP Chatbot</h1>
+  <p>This chatbot uses Natural Language Processing techniques like intent recognition and entity detection.</p>
   <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
 
   <df-messenger
     intent="WELCOME"
-    chat-title="NLP Chatbot"
+    chat-title="Cute AI Assistant"
     agent-id="88c1cbca-f2bc-4a6d-82b9-d82e86c5b907"
     language-code="en">
   </df-messenger>
