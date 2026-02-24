@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Creative AI Chatbot</title>
+  <title>AI Chatbot</title>
   <style>
-    * { box-sizing: border-box; }
-
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: Arial, sans-serif;
       background: linear-gradient(135deg, #667eea, #764ba2);
       display: flex;
       justify-content: center;
@@ -15,11 +13,10 @@
       height: 100vh;
     }
 
-    .chat-container {
+    .chat {
       width: 400px;
       height: 600px;
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(20px);
+      background: white;
       border-radius: 20px;
       display: flex;
       flex-direction: column;
@@ -27,115 +24,103 @@
       box-shadow: 0 20px 40px rgba(0,0,0,0.3);
     }
 
-    .chat-header {
-      text-align: center;
-      padding: 20px;
-      background: rgba(255,255,255,0.2);
+    .header {
+      background: #667eea;
       color: white;
-      font-weight: bold;
-      font-size: 18px;
-    }
-
-    .chat-messages {
-      flex: 1;
       padding: 15px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+      text-align: center;
+      font-weight: bold;
     }
 
-    .message {
+    .messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+    }
+
+    .msg {
+      margin: 8px 0;
+      padding: 8px 12px;
+      border-radius: 15px;
       max-width: 75%;
-      padding: 10px 15px;
-      border-radius: 20px;
-      line-height: 1.4;
     }
 
     .user {
+      background: #e0e0e0;
       align-self: flex-end;
-      background: #ffffff;
-      color: black;
     }
 
     .bot {
-      align-self: flex-start;
-      background: #4fc3f7;
+      background: #667eea;
       color: white;
+      align-self: flex-start;
     }
 
-    .chat-input {
+    .input {
       display: flex;
       padding: 10px;
-      background: rgba(255,255,255,0.2);
     }
 
-    .chat-input input {
+    .input input {
       flex: 1;
-      padding: 10px;
-      border-radius: 20px;
-      border: none;
-      outline: none;
+      padding: 8px;
+      border-radius: 15px;
+      border: 1px solid #ccc;
     }
 
-    .chat-input button {
-      margin-left: 10px;
-      padding: 10px 15px;
+    .input button {
+      margin-left: 8px;
+      padding: 8px 12px;
       border: none;
-      border-radius: 20px;
-      background: #ff9800;
+      border-radius: 15px;
+      background: #667eea;
       color: white;
       cursor: pointer;
-      font-weight: bold;
     }
   </style>
 </head>
-
 <body>
 
-<div class="chat-container">
-  <div class="chat-header">🤖 Creative AI Assistant</div>
-  <div class="chat-messages" id="chatbox"></div>
-  <div class="chat-input">
-    <input type="text" id="userInput" placeholder="Ask me anything...">
-    <button onclick="sendMessage()">Send</button>
+<div class="chat">
+  <div class="header">🤖 AI Assistant</div>
+  <div class="messages" id="chat"></div>
+  <div class="input">
+    <input id="input" placeholder="Ask me anything..." />
+    <button onclick="send()">Send</button>
   </div>
 </div>
 
-<script type="module">
-  import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+<script>
+async function send() {
+  const input = document.getElementById("input");
+  const chat = document.getElementById("chat");
+  const text = input.value.trim();
+  if (!text) return;
 
-  const API_KEY = "AIzaSyB3F2JnRobzliYs2GZJMB2247TkDnY5-64";
+  chat.innerHTML += `<div class="msg user">${text}</div>`;
+  input.value = "";
 
-  const genAI = new GoogleGenerativeAI(API_KEY);
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-002" });
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer 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",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "openai/gpt-3.5-turbo",
+      messages: [
+        { role: "user", content: text }
+      ]
+    })
+  });
 
-  window.sendMessage = async function () {
-    const input = document.getElementById("userInput");
-    const chatbox = document.getElementById("chatbox");
-    const userText = input.value.trim();
+  const data = await response.json();
+  const reply = data.choices[0].message.content;
 
-    if (!userText) return;
-
-    chatbox.innerHTML += `<div class="message user">${userText}</div>`;
-    input.value = "";
-
-    try {
-      const result = await model.generateContent(userText);
-      const response = await result.response;
-      const text = response.text();
-
-      chatbox.innerHTML += `<div class="message bot">${text}</div>`;
-      chatbox.scrollTop = chatbox.scrollHeight;
-
-    } catch (error) {
-      console.error(error);
-      chatbox.innerHTML += `<div class="message bot">⚠️ API Error. Check key or API enablement.</div>`;
-    }
-  }
+  chat.innerHTML += `<div class="msg bot">${reply}</div>`;
+  chat.scrollTop = chat.scrollHeight;
+}
 </script>
 
 </body>
 </html>
-
-
